@@ -1,32 +1,18 @@
-FROM node:18-slim
+FROM node:18-alpine
 
 WORKDIR /app
 
-# Install curl for health check
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
-# Copy package files
-COPY package.json package-lock.json ./
+# Copy package file
+COPY package.json .
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
-# Copy application code
+# Copy application
 COPY . .
-
-# Create logs directory
-RUN mkdir -p logs
-
-# Set environment
-ENV NODE_ENV=production
-ENV PORT=5000
 
 # Expose port
 EXPOSE 5000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:5000/api/health || exit 1
-
-# Start the application
+# Start application
 CMD ["node", "server.js"]
