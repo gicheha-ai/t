@@ -1,4 +1,4 @@
-const { ForexPredictor } = require('../ml_service');
+const  ForexPredictor  = require('../ml_service');
 
 class ForexPredictionsService {
   constructor() {
