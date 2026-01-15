@@ -175,8 +175,5 @@ module.exports = {
   mpesaCallback,
   queryPaymentStatus,
   getPaymentInstructions,
-  // Include existing functions
-  initiatePayment: require('./paymentController_old').initiatePayment,
-  verifyPayment: require('./paymentController_old').verifyPayment,
-  getPaymentHistory: require('./paymentController_old').getPaymentHistory
-};
+
+}
