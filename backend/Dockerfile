@@ -1,21 +1,15 @@
-FROM node:18-alpine
+FROM node:18-bullseye-slim
 
 WORKDIR /app
-
-# Install Python (for tensorflow if needed)
-RUN apk add --no-cache python3 py3-pip
 
 # Copy package files
 COPY package.json ./
 
-# Install dependencies with legacy peer deps to avoid conflicts
-RUN npm install --legacy-peer-deps --only=production
+# Install only production dependencies
+RUN npm install --production
 
-# Copy application code
+# Copy application
 COPY . .
-
-# Create logs directory
-RUN mkdir -p logs
 
 # Expose port
 EXPOSE 5000
