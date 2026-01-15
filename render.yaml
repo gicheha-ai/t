@@ -1,0 +1,90 @@
+# render.yaml
+services:
+  # Backend API Service
+  - type: web
+    name: predictions-backend
+    env: node
+    region: ohio  # or singapore, frankfurt, oregon
+    plan: free  # or starter, standard
+    buildCommand: cd backend && npm ci && npm run build
+    startCommand: cd backend && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MPESA_CONSUMER_KEY
+        sync: false
+      - key: MPESA_CONSUMER_SECRET
+        sync: false
+      - key: ODDS_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://predictions-frontend.onrender.com
+    autoDeploy: true
+    disk:
+      name: predictions-data
+      mountPath: /app/data
+      sizeGB: 1
+
+  # Frontend Service
+  - type: web
+    name: predictions-frontend
+    env: static
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: ./frontend/build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://predictions-backend.onrender.com/api
+      - key: REACT_APP_WEBSOCKET_URL
+        value: wss://predictions-backend.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
+    autoDeploy: true
+
+  # Database (MongoDB)
+  - type: pserv
+    name: predictions-db
+    env: docker
+    region: ohio
+    plan: free  # or starter, standard
+    dockerfilePath: ./mongo.Dockerfile
+    disk:
+      name: mongo-data
+      mountPath: /data/db
+      sizeGB: 1
+    envVars:
+      - key: MONGO_INITDB_ROOT_USERNAME
+        value: admin
+      - key: MONGO_INITDB_ROOT_PASSWORD
+        generateValue: true
+      - key: MONGO_INITDB_DATABASE
+        value: predictions_db
+    autoDeploy: true
+
+# Environment Variables Group
+envVarGroups:
+  - name: production
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: RATE_LIMIT_WINDOW
+        value: "15"
+      - key: RATE_LIMIT_MAX
+        value: "100"
