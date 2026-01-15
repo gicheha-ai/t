@@ -1,8 +1,8 @@
-const  ForexPredictor  = require('../ml_service');
+const { SimpleForexPredictor: ForexPredictor } = require('../ml_service');
 
 class ForexPredictionsService {
   constructor() {
-    this.predictor = new ForexPredictor();
+    this.predictor = new SimpleForexPredictor();
     this.currencyPairs = [
       'EUR/USD', 'GBP/USD', 'USD/JPY', 'USD/CHF',
       'AUD/USD', 'USD/CAD', 'NZD/USD', 'EUR/GBP'
