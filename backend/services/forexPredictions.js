@@ -1,4 +1,21 @@
-const { SimpleForexPredictor: ForexPredictor } = require('../ml_service');
+// services/forexPredictions.js - Add these lines at the top
+console.log('Current directory:', __dirname);
+console.log('Attempting to import ml_service...');
+
+try {
+  const mlService = require('../ml_service');
+  console.log('ml_service imported successfully:', mlService);
+  console.log('Keys in ml_service:', Object.keys(mlService));
+  console.log('SimpleForexPredictor exists?', 'SimpleForexPredictor' in mlService);
+  console.log('Type of SimpleForexPredictor:', typeof mlService.SimpleForexPredictor);
+} catch (error) {
+  console.error('Error importing ml_service:', error.message);
+  console.error('Error stack:', error.stack);
+}
+
+const { SimpleForexPredictor } = require('../ml_service');
+// ... rest of your code
+// const { SimpleForexPredictor: ForexPredictor } = require('../ml_service');
 
 class ForexPredictionsService {
   constructor() {
